@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">GithubOrganizations</string>
+    <string name="please_input_organization_name">please, input organization name</string>
+</resources>
