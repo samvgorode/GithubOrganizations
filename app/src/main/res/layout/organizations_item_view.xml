@@ -4,13 +4,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clickable="true">
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="110dp"
-            android:clickable="false">
-
             <ImageView
-                android:id="@+id/ivChannelsContactProfile"
+                android:id="@+id/ivImageOfOrg"
                 android:layout_width="110dp"
                 android:layout_height="110dp"
                 android:layout_alignParentLeft="true"
@@ -22,12 +17,12 @@
                 android:scaleType="fitXY"/>
 
             <TextView
-                android:id="@+id/tvChannelsContactName"
+                android:id="@+id/tvOrgLogin"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:layout_toEndOf="@id/ivChannelsContactProfile"
-                android:layout_toRightOf="@id/ivChannelsContactProfile"
+                android:layout_toEndOf="@id/ivImageOfOrg"
+                android:layout_toRightOf="@id/ivImageOfOrg"
                 android:fontFamily="sans-serif-medium"
                 android:letterSpacing="-0.02"
                 android:textColor="#4a4a4a"
@@ -38,23 +33,23 @@
                 android:maxLines="2"
                 android:ellipsize="end"/>
             <TextView
-                android:id="@+id/tvChannelsTimeOfMessage"
+                android:id="@+id/tvOrgLocation"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:layout_below="@+id/tvChannelsContactName"
-                android:layout_toEndOf="@id/ivChannelsContactProfile"
-                android:layout_toRightOf="@id/ivChannelsContactProfile"
+                android:layout_below="@+id/tvOrgLogin"
+                android:layout_toEndOf="@id/ivImageOfOrg"
+                android:layout_toRightOf="@id/ivImageOfOrg"
                 android:clickable="false"
                 android:focusable="false"/>
             <TextView
-                android:id="@+id/tvChannelsContactLastMessage"
+                android:id="@+id/tvOrgUrl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:layout_below="@+id/tvChannelsTimeOfMessage"
-                android:layout_toEndOf="@id/ivChannelsContactProfile"
-                android:layout_toRightOf="@id/ivChannelsContactProfile"
+                android:layout_below="@+id/tvOrgLocation"
+                android:layout_toEndOf="@id/ivImageOfOrg"
+                android:layout_toRightOf="@id/ivImageOfOrg"
                 android:fontFamily="sans-serif"
                 android:letterSpacing="-0.02"
                 android:textColor="#797979"
@@ -62,7 +57,4 @@
                 android:textStyle="normal"
                 android:clickable="false"
                 android:focusable="false"/>
-
-
-        </RelativeLayout>
 </RelativeLayout>

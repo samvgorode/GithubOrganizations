@@ -8,18 +8,17 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Base64;
+import android.view.View;
 import android.widget.EditText;
-import android.widget.Toast;
+import android.widget.ProgressBar;
 
 import com.example.who.githuborganizations.R;
 import com.example.who.githuborganizations.adapters.OrganizationsAdapter;
 import com.example.who.githuborganizations.iinterfaces.IOrganizationsView;
 import com.example.who.githuborganizations.pojo.Organization;
 import com.example.who.githuborganizations.presenters.OrganizationsActivityPresenter;
-import com.example.who.githuborganizations.utils.TokenUtils;
+import com.example.who.githuborganizations.utils.DialogUtils;
 
-import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 import butterknife.BindView;
@@ -33,6 +32,8 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
     public RecyclerView rvOrganizations;
     @BindView(R.id.etSearch)
     public EditText etSearch;
+    @BindView(R.id.pbProgress)
+    public ProgressBar pbProgress;
 
     public OrganizationsAdapter adapter;
 
@@ -45,10 +46,14 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
     }
 
     @Override
-    protected void onPostResume() {
-        super.onPostResume();
-        if(!isNetworkConnected())
-            Toast.makeText(this, "Switch on your internet!", Toast.LENGTH_LONG).show();
+    protected void onResume() {
+        super.onResume();
+        if (!isNetworkConnected())
+            DialogUtils.showInternetAlertDialog(this);
+        adapter = new OrganizationsAdapter(this);
+        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        rvOrganizations.setLayoutManager(layoutManager);
         init();
     }
 
@@ -62,22 +67,25 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
         etSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
             }
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (editable.toString().length() >= 3) {
-                    presenter.saveSearch(editable.toString());
-                    presenter.showOrganizations(editable.toString());
+                if (etSearch.getText().toString().length() >= 3) {
+                    presenter.showOrganizations(etSearch.getText().toString());
                 }
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        presenter.saveSearch(etSearch.getText().toString());
+        super.onPause();
     }
 
     @Override
@@ -86,19 +94,19 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
     }
 
     @Override
-    public void onBack() {
-
+    public void setDataToAdapter(List<Organization> data) {
+        adapter.setData(data);
+        rvOrganizations.setAdapter(adapter);
     }
 
     @Override
-    public void setDataToAdapter(List<Organization> data) {
-        adapter = new OrganizationsAdapter(this, data);
-        final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        if (rvOrganizations != null) {
-            rvOrganizations.setLayoutManager(layoutManager);
-            rvOrganizations.setAdapter(adapter);
-        }
+    public void showProgress() {
+        pbProgress.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hideProgress() {
+        pbProgress.setVisibility(View.GONE);
     }
 
     private boolean isNetworkConnected() {

@@ -22,7 +22,7 @@ public class Repository {
     private String fullName;
     @SerializedName("owner")
     @Expose
-    private Organization owner;
+    private UserOrganization owner;
     @SerializedName("private")
     @Expose
     private Boolean _private;
@@ -249,11 +249,11 @@ public class Repository {
         this.fullName = fullName;
     }
 
-    public Organization getOwner() {
+    public UserOrganization getOwner() {
         return owner;
     }
 
-    public void setOwner(Organization owner) {
+    public void setOwner(UserOrganization owner) {
         this.owner = owner;
     }
 

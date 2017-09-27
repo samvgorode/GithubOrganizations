@@ -12,8 +12,10 @@ public interface IOrganizationsView {
 
     void updateAdapter();
 
-    void onBack();
-
     void setDataToAdapter(List<Organization> data);
+
+    void showProgress();
+
+    void hideProgress();
 
 }

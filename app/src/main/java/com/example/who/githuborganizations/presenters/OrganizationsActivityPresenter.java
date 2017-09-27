@@ -7,7 +7,8 @@ import android.support.annotation.NonNull;
 import com.example.who.githuborganizations.controller.RestManager;
 import com.example.who.githuborganizations.iinterfaces.IOrganizationsView;
 import com.example.who.githuborganizations.pojo.Organization;
-import com.example.who.githuborganizations.pojo.Organizations;
+import com.example.who.githuborganizations.pojo.UserOrganization;
+import com.example.who.githuborganizations.pojo.UserOrganizations;
 import com.example.who.githuborganizations.utils.TokenUtils;
 
 import java.util.ArrayList;
@@ -27,10 +28,13 @@ import static com.example.who.githuborganizations.global.Constants.LAST_SEARCH;
 
 public class OrganizationsActivityPresenter {
 
-    private List<Organization> data = new ArrayList<>();
+    private List<UserOrganization> data = new ArrayList<>();
     private RestManager mManager;
     private IOrganizationsView view;
     private Context context;
+    private final String token = TokenUtils.getMyToken();
+    private Call<UserOrganizations> orgUserCall;
+    private Call<Organization> orgCall;
 
     public OrganizationsActivityPresenter(Context context, IOrganizationsView view) {
         this.view = view;
@@ -39,41 +43,73 @@ public class OrganizationsActivityPresenter {
     }
 
     public void showOrganizations(String search) {
-        String token = TokenUtils.getMyToken();
-        String query = search +"+in:login+type:org";
-        Call<Organizations> orgCall = mManager.getGithubService().getOrganizations(token, ACCEPT_HEADER, search);
-        orgCall.enqueue(new Callback<Organizations>() {
+        view.showProgress();
+        cancelCallbacks();
+        String query = search + "+in:login+type:org";
+        orgUserCall = mManager.getGithubService().getUserOrganizations(token, ACCEPT_HEADER, query.trim());
+        orgUserCall.enqueue(new Callback<UserOrganizations>() {
             @Override
-            public void onResponse(@NonNull Call<Organizations> call, @NonNull Response<Organizations> response) {
+            public void onResponse(@NonNull Call<UserOrganizations> call, @NonNull Response<UserOrganizations> response) {
+                if (data.size() > 0) data.clear();
                 if (response.body() != null) {
                     if (response.body().getItems().size() > 0) {
                         data = response.body().getItems();
-                        view.setDataToAdapter(data);
+                        if (data.size() > 0) setData();
                     }
+
                 }
             }
 
             @Override
-            public void onFailure(Call<Organizations> call, Throwable t) {
+            public void onFailure(Call<UserOrganizations> call, Throwable t) {
 
             }
         });
     }
 
+    private void setData() {
+        final List<Organization> dataOrg = new ArrayList<>(data.size());
 
-    public void saveSearch(String search){
+        for (int i = 0; i < data.size(); i++) {
+            orgCall = mManager.getGithubService().getOrganization(token, ACCEPT_HEADER, data.get(i).getLogin());
+            orgCall.enqueue(new Callback<Organization>() {
+                @Override
+                public void onResponse(Call<Organization> call, Response<Organization> response) {
+                    if (response.body() != null) {
+                        dataOrg.add(response.body());
+                        view.setDataToAdapter(dataOrg);
+                        view.hideProgress();
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<Organization> call, Throwable t) {
+                }
+            });
+        }
+    }
+
+    public void cancelCallbacks() {
+        if (orgUserCall != null && !orgUserCall.isCanceled() && orgUserCall.isExecuted())
+            orgUserCall.cancel();
+        if (orgCall != null && !orgCall.isCanceled() && orgCall.isExecuted()) orgCall.cancel();
+    }
+
+
+    public void saveSearch(String search) {
         SharedPreferences.Editor editor = context.getSharedPreferences(LAST_SEARCH, MODE_PRIVATE).edit();
         editor.putString(LAST_SEARCH, search);
         editor.apply();
     }
 
-    public String getSavedSearch(){
+    public String getSavedSearch() {
         String restoredValue = null;
         SharedPreferences prefs = context.getSharedPreferences(LAST_SEARCH, MODE_PRIVATE);
         String restoredText = prefs.getString(LAST_SEARCH, null);
         if (restoredText != null) {
             restoredValue = prefs.getString(LAST_SEARCH, "No value");//"No name defined" is the default value.
-        } return restoredValue;
+        }
+        return restoredValue;
     }
 
 }
