@@ -56,13 +56,12 @@ public class OrganizationsActivityPresenter {
                         data = response.body().getItems();
                         if (data.size() > 0) setData();
                     }
-
                 }
             }
 
             @Override
             public void onFailure(Call<UserOrganizations> call, Throwable t) {
-
+                view.hideProgress();
             }
         });
     }
@@ -84,12 +83,13 @@ public class OrganizationsActivityPresenter {
 
                 @Override
                 public void onFailure(Call<Organization> call, Throwable t) {
+                    view.hideProgress();
                 }
             });
         }
     }
 
-    public void cancelCallbacks() {
+    private void cancelCallbacks() {
         if (orgUserCall != null && !orgUserCall.isCanceled() && orgUserCall.isExecuted())
             orgUserCall.cancel();
         if (orgCall != null && !orgCall.isCanceled() && orgCall.isExecuted()) orgCall.cancel();
@@ -111,9 +111,4 @@ public class OrganizationsActivityPresenter {
         }
         return restoredValue;
     }
-
-    public void setLayoutManager(){
-
-    }
-
 }

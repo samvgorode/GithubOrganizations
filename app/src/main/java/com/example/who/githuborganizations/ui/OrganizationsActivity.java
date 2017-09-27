@@ -9,11 +9,13 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -28,6 +30,7 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class OrganizationsActivity extends AppCompatActivity implements IOrganizationsView, View.OnTouchListener {
 
@@ -38,6 +41,8 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
     public EditText etSearch;
     @BindView(R.id.pbProgress)
     public ProgressBar pbProgress;
+    @BindView(R.id.ivDelete)
+    public ImageView ivDelete;
 
     private OrganizationsActivityPresenter presenter;
     public OrganizationsAdapter adapter;
@@ -47,7 +52,8 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_organizations);
         ButterKnife.bind(this);
-        getSupportActionBar().hide();
+        if (getSupportActionBar() != null)
+            getSupportActionBar().hide();
         adapter = new OrganizationsAdapter(this);
         presenter = new OrganizationsActivityPresenter(OrganizationsActivity.this, this);
         initRecyclerView();
@@ -88,6 +94,8 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
 
             @Override
             public void afterTextChanged(Editable editable) {
+                if (TextUtils.isEmpty(etSearch.getText())) ivDelete.setVisibility(View.GONE);
+                else ivDelete.setVisibility(View.VISIBLE);
                 if (!isNetworkConnected())
                     DialogUtils.showInternetAlertDialog(OrganizationsActivity.this);
                 else {
@@ -103,6 +111,11 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
     protected void onPause() {
         presenter.saveSearch(etSearch.getText().toString());
         super.onPause();
+    }
+
+    @OnClick(R.id.ivDelete)
+    void click() {
+        etSearch.setText("");
     }
 
     @Override

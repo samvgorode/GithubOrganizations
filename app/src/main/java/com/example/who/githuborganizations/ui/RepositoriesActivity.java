@@ -49,7 +49,6 @@ public class RepositoriesActivity extends AppCompatActivity implements IReposito
 
     private static final String ORG_LOGIN = "ORG_LOGIN";
     private static final String NUM_OF_REPOS = "NUM_OF_REPOS";
-    private Repository item;
 
     public static Intent getNewIntent(Context context, String orgLogin, Integer numOfRepos) {
         Intent intent = new Intent(context, RepositoriesActivity.class);
@@ -63,7 +62,8 @@ public class RepositoriesActivity extends AppCompatActivity implements IReposito
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_repositores);
         ButterKnife.bind(this);
-        getSupportActionBar().hide();
+        if (getSupportActionBar() != null)
+            getSupportActionBar().hide();
     }
 
     @Override
@@ -85,7 +85,7 @@ public class RepositoriesActivity extends AppCompatActivity implements IReposito
             presenter.showOrganizations(orgName);
             Integer numOfRepos = intent.getIntExtra(NUM_OF_REPOS, 0);
             String reposNum = String.valueOf(numOfRepos);
-            String title = orgName + " repositories " + "("+reposNum+")";
+            String title = orgName + " repositories " + "(" + reposNum + ")";
             tvLabel.setText(title);
         }
     }
@@ -105,7 +105,7 @@ public class RepositoriesActivity extends AppCompatActivity implements IReposito
     }
 
     @OnClick(R.id.ivArrow)
-    void click(){
+    void click() {
         onBackPressed();
     }
 

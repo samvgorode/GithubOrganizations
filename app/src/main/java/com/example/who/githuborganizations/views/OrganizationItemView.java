@@ -15,7 +15,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.example.who.githuborganizations.R;
 import com.example.who.githuborganizations.pojo.Organization;
-import com.example.who.githuborganizations.ui.OrganizationsActivity;
 import com.example.who.githuborganizations.ui.RepositoriesActivity;
 import com.skydoves.medal.MedalAnimation;
 
@@ -62,7 +61,7 @@ public class OrganizationItemView extends RelativeLayout {
         initAnimator();
     }
 
-    private void initAnimator(){
+    private void initAnimator() {
         medalAnimation = new MedalAnimation.Builder()
                 .setDirection(MedalAnimation.REVERSE)
                 .setSpeed(1000)
@@ -104,7 +103,7 @@ public class OrganizationItemView extends RelativeLayout {
     }
 
     @OnClick(R.id.wrap)
-    void click(){
+    void click() {
         medalAnimation.startAnimation(OrganizationItemView.this);
         new Handler().postDelayed(new Runnable() {
             @Override

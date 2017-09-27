@@ -28,7 +28,6 @@ public class RepositoriesActivityPresenter {
     private IRepositoriesView view;
     private Context context;
     private final String token = TokenUtils.getMyToken();
-    private Call<List<Repository>> orgUserCall;
 
     public RepositoriesActivityPresenter(Context context, IRepositoriesView view) {
         this.view = view;
@@ -38,7 +37,7 @@ public class RepositoriesActivityPresenter {
 
     public void showOrganizations(String orgLogin) {
         view.showProgress();
-        orgUserCall = mManager.getGithubService().getRepositories(token, ACCEPT_HEADER, orgLogin);
+        Call<List<Repository>> orgUserCall = mManager.getGithubService().getRepositories(token, ACCEPT_HEADER, orgLogin);
         orgUserCall.enqueue(new Callback<List<Repository>>() {
             @Override
             public void onResponse(@NonNull Call<List<Repository>> call, @NonNull Response<List<Repository>> response) {

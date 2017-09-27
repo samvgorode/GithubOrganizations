@@ -4,12 +4,9 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.who.githuborganizations.R;
-import com.example.who.githuborganizations.pojo.Organization;
 import com.example.who.githuborganizations.pojo.Repository;
-import com.example.who.githuborganizations.ui.RepositoriesActivity;
 import com.skydoves.medal.MedalAnimation;
 
 import butterknife.BindView;
@@ -51,7 +48,7 @@ public class RepositoriesItemView extends RelativeLayout {
         initAnimator();
     }
 
-    private void initAnimator(){
+    private void initAnimator() {
         medalAnimation = new MedalAnimation.Builder()
                 .setDirection(MedalAnimation.RESTART)
                 .setSpeed(1000)
@@ -79,7 +76,7 @@ public class RepositoriesItemView extends RelativeLayout {
     }
 
     @OnClick(R.id.wrap)
-    void click(){
+    void click() {
         medalAnimation.startAnimation(RepositoriesItemView.this);
     }
 }
