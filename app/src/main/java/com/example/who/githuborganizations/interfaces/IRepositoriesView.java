@@ -9,9 +9,16 @@ import java.util.List;
  */
 
 public interface IRepositoriesView {
+
     void updateAdapter();
 
-    void onBack();
-
     void setDataToAdapter(List<Repository> data);
+
+    void showProgress();
+
+    void hideProgress();
+
+    void noResults();
+
+    void hasResults();
 }

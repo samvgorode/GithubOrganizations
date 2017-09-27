@@ -37,19 +37,25 @@ public class RepositoriesActivityPresenter {
     }
 
     public void showOrganizations(String orgLogin) {
+        view.showProgress();
         orgUserCall = mManager.getGithubService().getRepositories(token, ACCEPT_HEADER, orgLogin);
         orgUserCall.enqueue(new Callback<List<Repository>>() {
             @Override
             public void onResponse(@NonNull Call<List<Repository>> call, @NonNull Response<List<Repository>> response) {
                 if (response.body() != null) {
-                    data = response.body();
-                    view.setDataToAdapter(data);
+                    if (response.body().size() > 0) {
+                        view.hasResults();
+                        data = response.body();
+                        view.setDataToAdapter(data);
+                        view.hideProgress();
+                    } else view.noResults();
                 }
             }
 
             @Override
             public void onFailure(Call<List<Repository>> call, Throwable t) {
-
+                view.hideProgress();
+                view.noResults();
             }
         });
     }

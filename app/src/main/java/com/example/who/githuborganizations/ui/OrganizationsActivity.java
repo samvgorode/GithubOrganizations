@@ -1,5 +1,6 @@
 package com.example.who.githuborganizations.ui;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.support.v7.app.AppCompatActivity;
@@ -9,9 +10,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.example.who.githuborganizations.R;
 import com.example.who.githuborganizations.adapters.OrganizationsAdapter;
@@ -25,7 +29,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class OrganizationsActivity extends AppCompatActivity implements IOrganizationsView {
+public class OrganizationsActivity extends AppCompatActivity implements IOrganizationsView, View.OnTouchListener {
 
 
     @BindView(R.id.rvOrganizations)
@@ -44,18 +48,16 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
         setContentView(R.layout.activity_organizations);
         ButterKnife.bind(this);
         getSupportActionBar().hide();
+        adapter = new OrganizationsAdapter(this);
+        presenter = new OrganizationsActivityPresenter(OrganizationsActivity.this, this);
+        initRecyclerView();
     }
 
     @Override
     protected void onResume() {
         super.onResume();
         if (!isNetworkConnected()) DialogUtils.showInternetAlertDialog(this);
-        else {
-            adapter = new OrganizationsAdapter(this);
-            presenter = new OrganizationsActivityPresenter(OrganizationsActivity.this, this);
-            initRecyclerView();
-            init();
-        }
+        else init();
     }
 
     private void initRecyclerView() {
@@ -65,6 +67,7 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
                 layoutManager.getOrientation());
         rvOrganizations.addItemDecoration(dividerItemDecoration);
         rvOrganizations.setLayoutManager(layoutManager);
+        rvOrganizations.setOnTouchListener(this);
     }
 
     private void init() {
@@ -126,5 +129,19 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
     private boolean isNetworkConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo() != null;
+    }
+
+    @Override
+    public boolean onTouch(View view, MotionEvent motionEvent) {
+        hideSoftKeyboard(this);
+        return false;
+    }
+
+    public static void hideSoftKeyboard(Activity activity) {
+        InputMethodManager inputMethodManager =
+                (InputMethodManager) activity.getSystemService(
+                        Activity.INPUT_METHOD_SERVICE);
+        inputMethodManager.hideSoftInputFromWindow(
+                activity.getCurrentFocus().getWindowToken(), 0);
     }
 }

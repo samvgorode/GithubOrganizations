@@ -10,6 +10,7 @@ import com.example.who.githuborganizations.R;
 import com.example.who.githuborganizations.pojo.Organization;
 import com.example.who.githuborganizations.pojo.Repository;
 import com.example.who.githuborganizations.ui.RepositoriesActivity;
+import com.skydoves.medal.MedalAnimation;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -27,6 +28,7 @@ public class RepositoriesItemView extends RelativeLayout {
     TextView tvRepoDescription;
 
     private Repository item;
+    private MedalAnimation medalAnimation;
 
     public RepositoriesItemView(Context context) {
         super(context);
@@ -46,6 +48,16 @@ public class RepositoriesItemView extends RelativeLayout {
     private void init() {
         inflate(getContext(), R.layout.repository_item_view, this);
         ButterKnife.bind(this);
+        initAnimator();
+    }
+
+    private void initAnimator(){
+        medalAnimation = new MedalAnimation.Builder()
+                .setDirection(MedalAnimation.RESTART)
+                .setSpeed(1000)
+                .setTurn(1)
+                .setLoop(1)
+                .build();
     }
 
     void setRepoName(String name) {
@@ -68,7 +80,6 @@ public class RepositoriesItemView extends RelativeLayout {
 
     @OnClick(R.id.wrap)
     void click(){
-        Toast.makeText(getContext(), "Click", Toast.LENGTH_SHORT).show();
-
+        medalAnimation.startAnimation(RepositoriesItemView.this);
     }
 }
