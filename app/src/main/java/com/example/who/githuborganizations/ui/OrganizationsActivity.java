@@ -4,6 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
@@ -14,7 +15,7 @@ import android.widget.ProgressBar;
 
 import com.example.who.githuborganizations.R;
 import com.example.who.githuborganizations.adapters.OrganizationsAdapter;
-import com.example.who.githuborganizations.iinterfaces.IOrganizationsView;
+import com.example.who.githuborganizations.interfaces.IOrganizationsView;
 import com.example.who.githuborganizations.pojo.Organization;
 import com.example.who.githuborganizations.presenters.OrganizationsActivityPresenter;
 import com.example.who.githuborganizations.utils.DialogUtils;
@@ -26,7 +27,6 @@ import butterknife.ButterKnife;
 
 public class OrganizationsActivity extends AppCompatActivity implements IOrganizationsView {
 
-    private OrganizationsActivityPresenter presenter;
 
     @BindView(R.id.rvOrganizations)
     public RecyclerView rvOrganizations;
@@ -35,12 +35,13 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
     @BindView(R.id.pbProgress)
     public ProgressBar pbProgress;
 
+    private OrganizationsActivityPresenter presenter;
     public OrganizationsAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_organizations);
         ButterKnife.bind(this);
         getSupportActionBar().hide();
     }
@@ -48,17 +49,26 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
     @Override
     protected void onResume() {
         super.onResume();
-        if (!isNetworkConnected())
-            DialogUtils.showInternetAlertDialog(this);
-        adapter = new OrganizationsAdapter(this);
+        if (!isNetworkConnected()) DialogUtils.showInternetAlertDialog(this);
+        else {
+            adapter = new OrganizationsAdapter(this);
+            presenter = new OrganizationsActivityPresenter(OrganizationsActivity.this, this);
+            initRecyclerView();
+            init();
+        }
+    }
+
+    private void initRecyclerView() {
         final LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(rvOrganizations.getContext(),
+                layoutManager.getOrientation());
+        rvOrganizations.addItemDecoration(dividerItemDecoration);
         rvOrganizations.setLayoutManager(layoutManager);
-        init();
     }
 
     private void init() {
-        presenter = new OrganizationsActivityPresenter(OrganizationsActivity.this, this);
+
         String savedSearch = presenter.getSavedSearch();
         if (savedSearch != null) {
             etSearch.setText(savedSearch);
@@ -75,8 +85,12 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
 
             @Override
             public void afterTextChanged(Editable editable) {
-                if (etSearch.getText().toString().length() >= 3) {
-                    presenter.showOrganizations(etSearch.getText().toString());
+                if (!isNetworkConnected())
+                    DialogUtils.showInternetAlertDialog(OrganizationsActivity.this);
+                else {
+                    if (etSearch.getText().toString().length() >= 3) {
+                        presenter.showOrganizations(etSearch.getText().toString());
+                    }
                 }
             }
         });

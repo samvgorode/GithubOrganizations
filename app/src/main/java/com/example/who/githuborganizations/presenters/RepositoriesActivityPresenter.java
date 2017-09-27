@@ -4,12 +4,8 @@ import android.content.Context;
 import android.support.annotation.NonNull;
 
 import com.example.who.githuborganizations.controller.RestManager;
-import com.example.who.githuborganizations.iinterfaces.IOrganizationsView;
-import com.example.who.githuborganizations.iinterfaces.IRepositoriesView;
-import com.example.who.githuborganizations.pojo.Organization;
+import com.example.who.githuborganizations.interfaces.IRepositoriesView;
 import com.example.who.githuborganizations.pojo.Repository;
-import com.example.who.githuborganizations.pojo.UserOrganization;
-import com.example.who.githuborganizations.pojo.UserOrganizations;
 import com.example.who.githuborganizations.utils.TokenUtils;
 
 import java.util.ArrayList;

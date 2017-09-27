@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 
 import com.example.who.githuborganizations.controller.RestManager;
-import com.example.who.githuborganizations.iinterfaces.IOrganizationsView;
+import com.example.who.githuborganizations.interfaces.IOrganizationsView;
 import com.example.who.githuborganizations.pojo.Organization;
 import com.example.who.githuborganizations.pojo.UserOrganization;
 import com.example.who.githuborganizations.pojo.UserOrganizations;
@@ -110,6 +110,10 @@ public class OrganizationsActivityPresenter {
             restoredValue = prefs.getString(LAST_SEARCH, "No value");//"No name defined" is the default value.
         }
         return restoredValue;
+    }
+
+    public void setLayoutManager(){
+
     }
 
 }

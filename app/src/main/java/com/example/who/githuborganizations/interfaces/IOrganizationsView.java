@@ -1,4 +1,4 @@
-package com.example.who.githuborganizations.iinterfaces;
+package com.example.who.githuborganizations.interfaces;
 
 import com.example.who.githuborganizations.pojo.Organization;
 

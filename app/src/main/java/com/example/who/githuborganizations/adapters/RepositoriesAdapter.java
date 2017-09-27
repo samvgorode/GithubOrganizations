@@ -61,7 +61,7 @@ public class RepositoriesAdapter extends RecyclerView.Adapter<RepositoriesAdapte
     @Override
     public RepositoriesAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         RepositoriesItemView itemView = (RepositoriesItemView) LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.org_item, parent, false);
+                .inflate(R.layout.repo_item, parent, false);
         return new RepositoriesAdapter.MyViewHolder(itemView);
     }
 

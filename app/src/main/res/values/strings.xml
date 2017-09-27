@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">GithubOrganizations</string>
     <string name="please_input_organization_name">please, input organization name</string>
+    <string name="github_organizations_list">Github organizations list</string>
+    <string name="internet_error_message">Internet is not available, please check your internet connection and try again…</string>
+    <string name="internet_error_title">Oops, internet connection error</string>
 </resources>

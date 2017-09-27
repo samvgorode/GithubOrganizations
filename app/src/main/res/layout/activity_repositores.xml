@@ -14,14 +14,22 @@
         android:layout_centerInParent="true"
         android:visibility="gone"/>
 
-    <EditText
-        android:id="@+id/etSearch"
-        android:layout_width="match_parent"
+    <TextView
+        android:id="@+id/tvLabel"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:hint="@string/please_input_organization_name"/>
+        android:fontFamily="sans-serif-medium"
+        android:textColor="#4a4a4a"
+        android:textSize="22sp"
+        android:textStyle="normal"
+        android:clickable="false"
+        android:focusable="false"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="15dp"/>
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvOrganizations"
+        android:id="@+id/rvRepositories"
         android:layout_marginTop="10dp"
         android:layout_below="@+id/etSearch"
         android:layout_width="match_parent"
