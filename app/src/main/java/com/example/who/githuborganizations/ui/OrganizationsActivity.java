@@ -192,4 +192,11 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
         inputMethodManager.hideSoftInputFromWindow(
                 activity.getCurrentFocus().getWindowToken(), 0);
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        startActivity(SplashActivity.getNewIntent(this, true));
+        finish();
+    }
 }
