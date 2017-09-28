@@ -53,14 +53,18 @@ public class OrganizationsActivityPresenter {
                 if (data.size() > 0) data.clear();
                 if (response.body() != null) {
                     if (response.body().getItems().size() > 0) {
+                        view.hasResults();
                         data = response.body().getItems();
                         if (data.size() > 0) setData();
-                    }
+                    } else {
+                        view.noResults();
+                        view.hideProgress();}
                 }
             }
 
             @Override
             public void onFailure(Call<UserOrganizations> call, Throwable t) {
+                view.noResults();
                 view.hideProgress();
             }
         });
@@ -75,14 +79,19 @@ public class OrganizationsActivityPresenter {
                 @Override
                 public void onResponse(Call<Organization> call, Response<Organization> response) {
                     if (response.body() != null) {
+                        view.hasResults();
                         dataOrg.add(response.body());
                         view.setDataToAdapter(dataOrg);
+                        view.hideProgress();
+                    } else {
+                        view.noResults();
                         view.hideProgress();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<Organization> call, Throwable t) {
+                    view.noResults();
                     view.hideProgress();
                 }
             });

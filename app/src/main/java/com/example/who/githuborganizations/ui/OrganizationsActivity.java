@@ -3,6 +3,7 @@ package com.example.who.githuborganizations.ui;
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
@@ -43,6 +44,10 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
     public ProgressBar pbProgress;
     @BindView(R.id.ivDelete)
     public ImageView ivDelete;
+    @BindView(R.id.ivNoResults)
+    public ImageView ivNoResults;
+
+    public Handler handler = new Handler();
 
     private OrganizationsActivityPresenter presenter;
     public OrganizationsAdapter adapter;
@@ -99,8 +104,18 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
                 if (!isNetworkConnected())
                     DialogUtils.showInternetAlertDialog(OrganizationsActivity.this);
                 else {
+                    handler.removeCallbacksAndMessages(null);
                     if (etSearch.getText().toString().length() >= 3) {
-                        presenter.showOrganizations(etSearch.getText().toString());
+                        hasResults();
+                        showProgress();
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                presenter.showOrganizations(etSearch.getText().toString());
+                                hideProgress();
+                            }
+                        }, 2000);
+
                     }
                 }
             }
@@ -114,8 +129,13 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
     }
 
     @OnClick(R.id.ivDelete)
-    void click() {
+    void clickDelete() {
         etSearch.setText("");
+    }
+
+    @OnClick(R.id.ivNoResults)
+    void clickNoResults() {
+        hideSoftKeyboard(this);
     }
 
     @Override
@@ -137,6 +157,18 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
     @Override
     public void hideProgress() {
         pbProgress.setVisibility(View.GONE);
+    }
+
+    @Override
+    public void noResults() {
+        rvOrganizations.setVisibility(View.GONE);
+        ivNoResults.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void hasResults() {
+        rvOrganizations.setVisibility(View.VISIBLE);
+        ivNoResults.setVisibility(View.GONE);
     }
 
     private boolean isNetworkConnected() {

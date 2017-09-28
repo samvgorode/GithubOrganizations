@@ -44,6 +44,7 @@ public class RepositoriesActivity extends AppCompatActivity implements IReposito
     public ImageView ivNoResults;
     @BindView(R.id.rlWrapper)
     public RelativeLayout rlWrapper;
+
     public RepositoriesActivityPresenter presenter;
     public RepositoriesAdapter adapter;
 

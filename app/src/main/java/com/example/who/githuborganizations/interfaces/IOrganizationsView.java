@@ -18,4 +18,8 @@ public interface IOrganizationsView {
 
     void hideProgress();
 
+    void noResults();
+
+    void hasResults();
+
 }
