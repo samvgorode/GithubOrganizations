@@ -2,6 +2,7 @@ package com.example.who.githuborganizations.ui;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -18,8 +19,6 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
-import android.widget.Toast;
-
 import com.example.who.githuborganizations.R;
 import com.example.who.githuborganizations.adapters.OrganizationsAdapter;
 import com.example.who.githuborganizations.interfaces.IOrganizationsView;
@@ -51,6 +50,10 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
 
     private OrganizationsActivityPresenter presenter;
     public OrganizationsAdapter adapter;
+
+    public static Intent getNewIntent(Context context) {
+        return new Intent(context, OrganizationsActivity.class);
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
