@@ -107,18 +107,10 @@ public class OrganizationsActivity extends AppCompatActivity implements IOrganiz
                 if (!isNetworkConnected())
                     DialogUtils.showInternetAlertDialog(OrganizationsActivity.this);
                 else {
-                    handler.removeCallbacksAndMessages(null);
                     if (etSearch.getText().toString().length() >= 3) {
+                        handler.removeCallbacksAndMessages(null);
                         hasResults();
-                        showProgress();
-                        handler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                presenter.showOrganizations(etSearch.getText().toString());
-                                hideProgress();
-                            }
-                        }, 2000);
-
+                        handler.postDelayed(() -> presenter.showOrganizations(etSearch.getText().toString()), 500);
                     }
                 }
             }

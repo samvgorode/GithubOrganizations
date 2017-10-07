@@ -5,9 +5,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.ProgressBar;
 
 import com.example.who.githuborganizations.R;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -15,6 +18,9 @@ import butterknife.ButterKnife;
  */
 
 public class SplashActivity extends AppCompatActivity {
+
+    @BindView(R.id.bar)
+    ProgressBar bar;
 
     private static final String EXIT = "EXIT";
     private Handler handler = new Handler();
@@ -38,16 +44,15 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void fetchIntent() {
+        bar.setVisibility(View.VISIBLE);
         handler.removeCallbacksAndMessages(null);
         Intent intent = getIntent();
         if (intent.hasExtra(EXIT)) isExit = intent.getBooleanExtra(EXIT, false);
         if (isExit) {
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    SplashActivity.this.finish();
-                }
-            }, 1000);
+            handler.postDelayed(() -> {
+                bar.setVisibility(View.GONE);
+                SplashActivity.this.finish();
+            }, 500);
         }
     }
 
@@ -58,11 +63,9 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     private void init() {
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                startActivity(OrganizationsActivity.getNewIntent(SplashActivity.this));
-            }
-        }, 1000);
+        handler.postDelayed(() -> {
+            bar.setVisibility(View.GONE);
+            startActivity(OrganizationsActivity.getNewIntent(SplashActivity.this));
+        }, 500);
     }
 }

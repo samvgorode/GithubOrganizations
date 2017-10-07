@@ -3,6 +3,8 @@ package com.example.who.githuborganizations.presenters;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
+import android.support.v7.view.SupportActionModeWrapper;
+import android.util.Log;
 
 import com.example.who.githuborganizations.controller.RestManager;
 import com.example.who.githuborganizations.interfaces.IOrganizationsView;
@@ -11,9 +13,21 @@ import com.example.who.githuborganizations.pojo.UserOrganization;
 import com.example.who.githuborganizations.pojo.UserOrganizations;
 import com.example.who.githuborganizations.utils.TokenUtils;
 
+import org.reactivestreams.Subscriber;
+import org.reactivestreams.Subscription;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Observer;
+import java.util.function.Function;
 
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.functions.Action;
+import io.reactivex.internal.observers.SubscriberCompletableObserver;
+import io.reactivex.observers.DisposableObserver;
+import io.reactivex.schedulers.Schedulers;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -33,8 +47,8 @@ public class OrganizationsActivityPresenter {
     private IOrganizationsView view;
     private Context context;
     private final String token = TokenUtils.getMyToken();
-    private Call<UserOrganizations> orgUserCall;
-    private Call<Organization> orgCall;
+    private DisposableObserver userOrganizations;
+    private DisposableObserver organizations;
 
     public OrganizationsActivityPresenter(Context context, IOrganizationsView view) {
         this.view = view;
@@ -46,62 +60,65 @@ public class OrganizationsActivityPresenter {
         view.showProgress();
         cancelCallbacks();
         String query = search + "+in:login+type:org";
-        orgUserCall = mManager.getGithubService().getUserOrganizations(token, ACCEPT_HEADER, query.trim());
-        orgUserCall.enqueue(new Callback<UserOrganizations>() {
-            @Override
-            public void onResponse(@NonNull Call<UserOrganizations> call, @NonNull Response<UserOrganizations> response) {
-                if (data.size() > 0) data.clear();
-                if (response.body() != null) {
-                    if (response.body().getItems().size() > 0) {
-                        view.hasResults();
-                        data = response.body().getItems();
-                        if (data.size() > 0) setData();
-                    } else {
-                        view.noResults();
-                        view.hideProgress();}
-                }
-            }
+        userOrganizations = mManager.getGithubService().getUserOrganizations(token, ACCEPT_HEADER, query.trim())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .cache()
+                .subscribeWith(new DisposableObserver<UserOrganizations>() {
+                    @Override
+                    public void onNext(UserOrganizations value) {
+                        if (!value.getItems().isEmpty()) {
+                            data.addAll(value.getItems());
+                            setData();
+                            view.hideProgress();
+                        } else view.noResults();
+                    }
 
-            @Override
-            public void onFailure(Call<UserOrganizations> call, Throwable t) {
-                view.noResults();
-                view.hideProgress();
-            }
-        });
+                    @Override
+                    public void onError(Throwable e) {
+                        view.noResults();
+                        view.hideProgress();
+                    }
+
+                    @Override
+                    public void onComplete() {
+                    }
+                });
     }
 
     private void setData() {
         final List<Organization> dataOrg = new ArrayList<>(data.size());
-
         for (int i = 0; i < data.size(); i++) {
-            orgCall = mManager.getGithubService().getOrganization(token, ACCEPT_HEADER, data.get(i).getLogin());
-            orgCall.enqueue(new Callback<Organization>() {
-                @Override
-                public void onResponse(Call<Organization> call, Response<Organization> response) {
-                    if (response.body() != null) {
-                        view.hasResults();
-                        dataOrg.add(response.body());
-                        view.setDataToAdapter(dataOrg);
-                        view.hideProgress();
-                    } else {
-                        view.noResults();
-                        view.hideProgress();
-                    }
-                }
+            organizations = mManager.getGithubService().getOrganization(token, ACCEPT_HEADER, data.get(i).getLogin())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .cache()
+                    .subscribeWith(new DisposableObserver<Organization>() {
+                        @Override
+                        public void onNext(Organization value) {
+                            view.hasResults();
+                            dataOrg.add(value);
+                        }
 
-                @Override
-                public void onFailure(Call<Organization> call, Throwable t) {
-                    view.noResults();
-                    view.hideProgress();
-                }
-            });
+                        @Override
+                        public void onError(Throwable e) {
+                            view.noResults();
+                            view.hideProgress();
+                        }
+
+                        @Override
+                        public void onComplete() {
+                            view.setDataToAdapter(dataOrg);
+                            view.hideProgress();
+                        }
+                    });
         }
     }
 
     private void cancelCallbacks() {
-        if (orgUserCall != null && !orgUserCall.isCanceled() && orgUserCall.isExecuted())
-            orgUserCall.cancel();
-        if (orgCall != null && !orgCall.isCanceled() && orgCall.isExecuted()) orgCall.cancel();
+        if (userOrganizations != null) userOrganizations.dispose();
+        if (organizations != null) organizations.dispose();
+        if(data!=null) data.clear();
     }
 
 

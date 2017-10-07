@@ -7,6 +7,7 @@ import com.example.who.githuborganizations.pojo.UserOrganization;
 
 import java.util.List;
 
+import io.reactivex.Observable;
 import retrofit2.Call;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
@@ -21,11 +22,11 @@ import static android.R.attr.value;
 
 public interface GithubService {
     @GET("search/users")
-    Call<UserOrganizations> getUserOrganizations(@Header("Authorization") String token, @Header("Accept") String accept, @Query(value = "q", encoded = true) String search);
+    Observable<UserOrganizations> getUserOrganizations(@Header("Authorization") String token, @Header("Accept") String accept, @Query(value = "q", encoded = true) String search);
 
     @GET("/orgs/{org}")
-    Call<Organization> getOrganization(@Header("Authorization") String token, @Header("Accept") String accept, @Path("org") String orgname);
+    Observable<Organization> getOrganization(@Header("Authorization") String token, @Header("Accept") String accept, @Path("org") String orgname);
 
     @GET("users/{owner}/repos")
-    Call<List<Repository>> getRepositories(@Header("Authorization") String token, @Header("Accept") String accept, @Path("owner") String owner);
+    Observable<List<Repository>> getRepositories(@Header("Authorization") String token, @Header("Accept") String accept, @Path("owner") String owner);
 }
